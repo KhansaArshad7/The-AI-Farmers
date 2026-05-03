@@ -48,7 +48,7 @@ const trendData = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'calc' | 'market' | 'drone' | 'soil'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'calc' | 'market' | 'drone' | 'soil' | 'leaf'>('home');
   const [showSplash, setShowSplash] = useState(true);
 
   if (showSplash) {
@@ -114,6 +114,18 @@ export default function App() {
             </motion.div>
           )}
 
+          {activeTab === 'leaf' && (
+            <motion.div 
+              key="leaf"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="pb-12"
+            >
+              <LeafScanCard />
+            </motion.div>
+          )}
+
           {activeTab === 'market' && (
             <motion.div 
               key="market"
@@ -143,7 +155,7 @@ export default function App() {
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t border-emerald-100 flex items-center justify-around px-2 z-50">
         <NavButton active={activeTab === 'home'} icon={<Home />} label="Home" onClick={() => setActiveTab('home')} />
-        <NavButton active={activeTab === 'calc'} icon={<CalcIcon />} label="Hisaab" onClick={() => setActiveTab('calc')} />
+        <NavButton active={activeTab === 'leaf'} icon={<Camera />} label="Leaf Scan" onClick={() => setActiveTab('leaf')} />
         <NavButton active={activeTab === 'soil'} icon={<FileText />} label="Soil Report" onClick={() => setActiveTab('soil')} />
         <NavButton active={activeTab === 'market'} icon={<Store />} label="Mandi" onClick={() => setActiveTab('market')} />
         <NavButton active={activeTab === 'drone'} icon={<Plane />} label="Drone" onClick={() => setActiveTab('drone')} />
@@ -157,107 +169,118 @@ export default function App() {
 function SplashScreen({ onStart }: { onStart: () => void }) {
   return (
     <motion.div 
-      exit={{ opacity: 0, y: -20 }}
-      className="fixed inset-0 z-[100] bg-[#021d12] flex flex-col items-center justify-center p-8 overflow-hidden text-center"
+      exit={{ opacity: 0, scale: 1.05 }}
+      className="fixed inset-0 z-[100] bg-[#01160d] flex flex-col items-center justify-center p-8 overflow-hidden"
     >
-      {/* Premium Gradient Overlays */}
-      <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/50 via-transparent to-[#021d12]"></div>
-      <div className="absolute top-[-20%] right-[-10%] w-[80%] h-[80%] bg-emerald-500/10 rounded-full blur-[140px] animate-pulse" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[80%] h-[80%] bg-emerald-400/10 rounded-full blur-[140px] animate-pulse" />
+      {/* --- PREMIUM BACKGROUND LAYERS --- */}
+      {/* Animated Technical Grid */}
+      <div className="absolute inset-0 opacity-20" 
+           style={{ backgroundImage: 'linear-gradient(#10b981 1px, transparent 1px), linear-gradient(90deg, #10b981 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       
+      {/* Radial Atmospheric Gradients */}
+      <div className="absolute top-[-10%] right-[-10%] w-[70%] h-[70%] bg-emerald-500/20 rounded-full blur-[160px] animate-pulse" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[70%] h-[70%] bg-emerald-400/15 rounded-full blur-[160px] animate-pulse" />
+      
+      {/* Deep Vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#01160d_100%)]" />
+
       <motion.div
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-10 space-y-16"
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 flex flex-col items-center max-w-lg w-full text-center"
       >
-        <div className="relative">
+        {/* --- THE AI CORE VISUAL --- */}
+        <div className="relative mb-20">
+          {/* Rotating Orbitals */}
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -inset-8 border border-emerald-500/30 rounded-full" />
+          <motion.div 
+            animate={{ rotate: -360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            className="absolute -inset-12 border border-dashed border-emerald-400/10 rounded-full" />
+          
+          {/* Main Core Container */}
           <motion.div 
             animate={{ 
-              scale: [1, 1.05, 1],
-              rotate: [12, 10, 12]
+              boxShadow: [
+                "0 0 40px rgba(16, 185, 129, 0.2)",
+                "0 0 80px rgba(16, 185, 129, 0.4)",
+                "0 0 40px rgba(16, 185, 129, 0.2)"
+              ] 
             }}
-            transition={{ 
-              duration: 4, 
-              repeat: Infinity, 
-              ease: "easeInOut" 
-            }}
-            className="relative w-48 h-48 bg-gradient-to-tr from-white to-emerald-50 rounded-[4rem] flex items-center justify-center mx-auto shadow-[0_40px_80px_-15px_rgba(16,185,129,0.25)]"
+            transition={{ duration: 4, repeat: Infinity }}
+            className="relative w-44 h-44 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-[3.5rem] flex items-center justify-center shadow-2xl"
           >
-            <Leaf size={96} className="text-emerald-500 drop-shadow-2xl" />
-            
-            {/* Glow Effect around logo */}
-            <div className="absolute inset-0 rounded-[4rem] border-2 border-emerald-400/20 blur-sm"></div>
+            {/* The Inner Icon Glass Effect */}
+            <div className="absolute inset-1.5 bg-[#01160d] rounded-[3.1rem] flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_center,rgba(52,211,153,0.5)_0%,transparent_70%)]" />
+              <Leaf size={70} className="text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.8)]" />
+            </div>
           </motion.div>
-          
-          {/* Floating Accent */}
-          <motion.div 
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -bottom-4 -right-2 bg-emerald-400 text-emerald-950 p-4 rounded-3xl shadow-2xl border-4 border-[#021d12]"
-          >
-            <Plane size={28} className="rotate-45" />
-          </motion.div>
+
+          {/* Floating Data Nodes */}
+          <motion.div animate={{ y: [0, -15, 0] }} transition={{ duration: 3, repeat: Infinity }} className="absolute -top-4 -left-4 bg-white p-2.5 rounded-2xl shadow-xl"><CalcIcon size={20} className="text-emerald-600" /></motion.div>
+          <motion.div animate={{ y: [0, 15, 0] }} transition={{ duration: 4, repeat: Infinity }} className="absolute -bottom-4 -right-2 bg-emerald-400 p-2.5 rounded-2xl shadow-xl text-emerald-950"><Plane size={20} /></motion.div>
         </div>
         
-        <div className="space-y-6">
+        {/* --- PREMIUM TYPOGRAPHY --- */}
+        <div className="space-y-8 mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="relative"
+            initial={{ opacity: 0, letterSpacing: "0.2em" }}
+            animate={{ opacity: 1, letterSpacing: "0.6em" }}
+            transition={{ delay: 0.5, duration: 1 }}
           >
-            <span className="text-emerald-400 font-black uppercase tracking-[0.6em] text-[10px] mb-4 block opacity-80">Jadeed • Khushhaal • Kamyab</span>
-            
-            {/* Metallic Shine Text Effect */}
-            <h1 className="text-7xl font-black uppercase tracking-tighter leading-[0.8] relative">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-emerald-100 to-white bg-[length:200%_auto] animate-shine">
-                Powerful <br/> 
-                <span className="italic text-emerald-400 drop-shadow-[0_0_15px_rgba(52,211,153,0.3)]">Kissan</span>
-              </span>
-            </h1>
+            <span className="text-emerald-400 font-bold uppercase text-[9px] mb-4 block">Precision • Intelligence • Growth</span>
           </motion.div>
+
+          <h1 className="text-[5.5rem] font-black uppercase tracking-tighter leading-[0.75] text-white">
+            <span className="block italic">Smart</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-100 via-white to-emerald-100 bg-[length:200%_auto] animate-shine">Kissan</span>
+          </h1>
           
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="text-emerald-100/40 font-light uppercase tracking-[0.25em] text-[11px] max-w-[300px] mx-auto leading-relaxed"
-          >
+          <p className="text-emerald-100/30 font-medium tracking-[0.3em] text-[10px] uppercase max-w-[280px] mx-auto leading-relaxed border-t border-emerald-500/10 pt-6">
             Kissan ki taraqqi, <br/> Mulk ki khushhali ka naya safar
-          </motion.p>
+          </p>
         </div>
 
+        {/* --- CALL TO ACTION --- */}
         <motion.button 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, type: 'spring', damping: 20 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onStart}
-          onHoverStart={() => {}}
-          className="group relative bg-emerald-500 text-emerald-950 px-12 py-7 rounded-[2.5rem] font-black text-xl uppercase tracking-widest shadow-[0_20px_50px_-10px_rgba(16,185,129,0.5)] active:scale-95 transition-all flex items-center gap-6 mx-auto overflow-hidden"
+          className="group relative px-12 py-8 rounded-[2.5rem] overflow-hidden transition-all"
         >
-          {/* Button Glow/Reflection Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+          {/* Animated Glow Border */}
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-emerald-600 animate-pulse opacity-20 group-hover:opacity-40" />
+          <div className="absolute inset-[2px] bg-[#01160d] rounded-[2.4rem] group-hover:bg-emerald-900/40 transition-colors" />
           
-          <span className="relative z-10">Kamyabi Ka Safar</span>
-          <ChevronRight size={32} className="relative z-10 group-hover:translate-x-2 transition-transform duration-300" />
+          <div className="relative z-10 flex items-center gap-6 text-white">
+            <span className="text-xl font-black uppercase tracking-[0.2em]">Safar Shuru Karein</span>
+            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-emerald-400 group-hover:text-emerald-950 transition-all">
+              <ChevronRight size={28} />
+            </div>
+          </div>
         </motion.button>
       </motion.div>
 
-      {/* Bottom Footer Info */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.3 }}
-        transition={{ delay: 1.8 }}
-        className="absolute bottom-12 flex flex-col items-center gap-2"
-      >
-        <div className="h-[1px] w-12 bg-emerald-400 mb-2"></div>
-        <div className="flex items-center gap-4 text-white font-mono text-[9px] uppercase tracking-[0.5em]">
-          <span>Verified Tool</span>
-          <span className="w-1 h-1 bg-emerald-400 rounded-full"></span>
-          <span>Agri-Tech 2026</span>
+      {/* --- SYSTEM METRICS FOOTER --- */}
+      <div className="absolute bottom-10 left-0 right-0 px-12 flex justify-between items-end">
+        <div className="flex flex-col gap-1 items-start">
+          <div className="h-[1px] w-16 bg-emerald-500 mb-2"></div>
+          <span className="text-emerald-400 font-mono text-[7px] uppercase tracking-[0.4em]">Authorized Access Only</span>
+          <span className="text-white/20 font-mono text-[8px] uppercase tracking-[0.4em]">SYS_PK_2026 // AGRI_HUB</span>
         </div>
-      </motion.div>
+        
+        <div className="flex items-center gap-3">
+          <div className="flex -space-x-2">
+            {[1,2,3].map(i => <div key={i} className="w-6 h-6 rounded-full bg-emerald-900 border border-emerald-500/30 flex items-center justify-center"><div className="w-1 h-1 bg-emerald-400 rounded-full" /></div>)}
+          </div>
+          <span className="text-emerald-100/20 font-mono text-[8px] uppercase tracking-[0.4em]">+1.2k Live Data Nodes</span>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -342,6 +365,147 @@ function CalculatorCard() {
             <div className="text-[10px] font-black uppercase text-emerald-600 mb-1">Kul Kharcha Result</div>
             <div className="text-5xl font-black text-emerald-900 leading-none mb-4">{result.total.toLocaleString()}<span className="text-xs uppercase font-normal ml-2 opacity-50">PKR</span></div>
             <p className="text-base font-bold text-emerald-800 italic font-serif leading-tight">{result.urdu}</p>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function LeafScanCard() {
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any | null>(null);
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onloadend = () => setImage(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const startScan = () => {
+    setLoading(true);
+    setResult(null);
+    
+    // Professional Diagnosis Simulation
+    setTimeout(() => {
+      setResult({
+        diagnosis: "Wheat Rust (Kanak ki Kungi)",
+        confidence: "94%",
+        earlyDetection: "Bimari abhi shuruati marhalay mein hai. Is waqt control karna asaan hai.",
+        diagnosisDetails: "Paton par peeley aur bhurey rang ke nishanat (patterns) wazeh hain jo fungal infection ki nishandahi karte hain.",
+        treatment: "Fauri tor par 'Tilt' ya 'Nativo' spray ka istamal karein. Aglay 2 din tak pani na lagayen taake dawa apna asar kar sakay."
+      });
+      setLoading(false);
+    }, 3000);
+  };
+
+  return (
+    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-emerald-50">
+      <header className="flex justify-between items-start mb-8">
+        <div>
+          <h3 className="text-2xl font-black uppercase italic tracking-tighter text-emerald-900 leading-none">Leaf Scan</h3>
+          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mt-1">Bimari Ki Pehchan</p>
+        </div>
+        <div className="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
+          <Camera size={24} />
+        </div>
+      </header>
+
+      <div className="space-y-6">
+        {!image ? (
+          <label className="border-4 border-dashed border-emerald-50 rounded-[2.5rem] py-16 flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-emerald-50 transition-all group">
+            <input type="file" accept="image/*" capture="environment" onChange={handleUpload} className="hidden" />
+            <div className="w-20 h-20 bg-emerald-100 rounded-3xl flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform">
+              <Camera size={40} />
+            </div>
+            <div className="text-center px-6">
+              <span className="block font-black uppercase text-xs tracking-widest text-emerald-900">Patay ki Photo Lein</span>
+              <span className="text-[10px] font-bold text-stone-400 mt-1 block leading-tight">Disease detect karne ke liye saaf tasveer upload karein</span>
+            </div>
+          </label>
+        ) : (
+          <div className="space-y-4">
+            <div className="relative rounded-[2.5rem] overflow-hidden border-4 border-emerald-100 aspect-square group">
+              <img src={image} alt="Leaf" className="w-full h-full object-cover" />
+              {loading && (
+                <div className="absolute inset-0 bg-emerald-900/60 backdrop-blur-sm flex flex-col items-center justify-center text-white p-8 text-center bg-scan-line">
+                  <div className="w-full h-1 bg-emerald-400 absolute top-0 animate-scan shadow-[0_0_15px_#10b981]"></div>
+                  <Loader2 size={48} className="animate-spin mb-4" />
+                  <span className="font-black uppercase tracking-widest text-sm">AI Scan Ho Raha Hai...</span>
+                </div>
+              )}
+              <button 
+                onClick={() => { setImage(null); setResult(null); }}
+                className="absolute top-4 right-4 bg-white/80 p-2 rounded-xl text-red-500 hover:bg-white"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            {!result && !loading && (
+              <button 
+                onClick={startScan}
+                className="w-full bg-emerald-600 text-white py-6 rounded-3xl font-black uppercase tracking-[0.2em] shadow-xl shadow-emerald-100 active:scale-95 transition-all flex items-center justify-center gap-3"
+              >
+                <RefreshCcw size={20} />
+                Bimari Pehchanain
+              </button>
+            )}
+          </div>
+        )}
+
+        {result && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+          >
+            <div className="p-6 bg-emerald-900 text-white rounded-[2.5rem] space-y-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400 block mb-1">Diagnosis Result</span>
+                  <h4 className="text-2xl font-black tracking-tighter uppercase leading-none">{result.diagnosis}</h4>
+                </div>
+                <div className="bg-emerald-400 text-emerald-950 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  {result.confidence} Match
+                </div>
+              </div>
+              
+              <div className="space-y-4 pt-2 border-t border-emerald-800">
+                <div className="flex gap-4">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-800 flex-shrink-0 flex items-center justify-center">
+                    <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">Early Detection</p>
+                    <p className="text-xs font-bold font-sans opacity-90">{result.earlyDetection}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-800 flex-shrink-0 flex items-center justify-center">
+                    <FileText size={14} className="text-emerald-400" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">Accurate Diagnosis</p>
+                    <p className="text-xs font-bold font-sans opacity-90">{result.diagnosisDetails}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-400 flex-shrink-0 flex items-center justify-center text-emerald-950">
+                    <ChevronRight size={18} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">Treatment Advice</p>
+                    <p className="text-xs font-bold font-sans opacity-90 italic underline decoration-emerald-400/50">{result.treatment}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </motion.div>
         )}
       </div>
