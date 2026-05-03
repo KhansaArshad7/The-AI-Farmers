@@ -48,7 +48,7 @@ const trendData = [
 ];
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'home' | 'calc' | 'market' | 'drone' | 'soil' | 'leaf'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'calc' | 'market' | 'drone' | 'soil' | 'leaf' | 'rotation'>('home');
   const [showSplash, setShowSplash] = useState(true);
 
   if (showSplash) {
@@ -149,14 +149,27 @@ export default function App() {
               <DroneBookingCard />
             </motion.div>
           )}
+
+          {activeTab === 'rotation' && (
+            <motion.div 
+              key="rotation"
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              className="pb-12"
+            >
+              <RotationPlannerCard />
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-md border-t border-emerald-100 flex items-center justify-around px-2 z-50">
         <NavButton active={activeTab === 'home'} icon={<Home />} label="Home" onClick={() => setActiveTab('home')} />
-        <NavButton active={activeTab === 'leaf'} icon={<Camera />} label="Leaf Scan" onClick={() => setActiveTab('leaf')} />
-        <NavButton active={activeTab === 'soil'} icon={<FileText />} label="Soil Report" onClick={() => setActiveTab('soil')} />
+        <NavButton active={activeTab === 'leaf'} icon={<Camera />} label="Leaf" onClick={() => setActiveTab('leaf')} />
+        <NavButton active={activeTab === 'rotation'} icon={<RefreshCcw />} label="Rotation" onClick={() => setActiveTab('rotation')} />
+        <NavButton active={activeTab === 'soil'} icon={<FileText />} label="Soil" onClick={() => setActiveTab('soil')} />
         <NavButton active={activeTab === 'market'} icon={<Store />} label="Mandi" onClick={() => setActiveTab('market')} />
         <NavButton active={activeTab === 'drone'} icon={<Plane />} label="Drone" onClick={() => setActiveTab('drone')} />
       </nav>
@@ -633,6 +646,126 @@ function InputGroup({ label, value, onChange, icon }: { label: string, value: st
           className="w-full bg-[#f8faf9] border-2 border-transparent p-4 rounded-2xl font-mono text-xl focus:border-emerald-500 transition-all outline-none"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 font-black text-emerald-200 text-xs">{icon}</div>
+      </div>
+    </div>
+  );
+}
+
+function RotationPlannerCard() {
+  const [currentCrop, setCurrentCrop] = useState('');
+  const [soilType, setSoilType] = useState('Loamy');
+  const [plan, setPlan] = useState<any[] | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const generatePlan = () => {
+    setLoading(true);
+    setPlan(null);
+
+    // Simulated Agricultural Intelligence
+    setTimeout(() => {
+      const suggestions = [
+        { 
+          season: 'Agli Fasal (Next Crop)', 
+          crop: currentCrop === 'Wheat' ? 'Moong (Legume)' : 'Sarson (Mustard)', 
+          reason: 'Matti mein Nitrogen wapas lanay ke liye.', 
+          impact: '+15% Yield Boost' 
+        },
+        { 
+          season: 'Dusri Fasal (Season 2)', 
+          crop: 'Cotton (Kapaas)', 
+          reason: 'Gahri jaron wali fasal zameen ki nichli teh ko behtar karegi.', 
+          impact: 'Nutrient Recovery' 
+        },
+        { 
+          season: 'Teesri Fasal (Season 3)', 
+          crop: 'Berseem (Fodder)', 
+          reason: 'Matti ki sakht pan door karne aur organic matter barhane ke liye.', 
+          impact: 'Soil Restoration' 
+        }
+      ];
+      setPlan(suggestions);
+      setLoading(false);
+    }, 2000);
+  };
+
+  return (
+    <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-emerald-50">
+      <header className="flex justify-between items-start mb-8">
+        <div>
+          <h3 className="text-2xl font-black uppercase italic tracking-tighter text-emerald-900 leading-none">Rotation Planner</h3>
+          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mt-1">Multi-Season Strategy</p>
+        </div>
+        <RefreshCcw size={32} className="text-emerald-100" />
+      </header>
+
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Mojuda Fasal (Current Crop)</label>
+            <select 
+              value={currentCrop}
+              onChange={(e) => setCurrentCrop(e.target.value)}
+              className="w-full bg-[#f8faf9] border-2 border-transparent p-4 rounded-2xl font-bold text-lg focus:border-emerald-500 transition-all outline-none appearance-none"
+            >
+              <option value="">Select Crop...</option>
+              <option value="Wheat">Gandum (Wheat)</option>
+              <option value="Cotton">Kapaas (Cotton)</option>
+              <option value="Maize">Makai (Maize)</option>
+              <option value="Rice">Rice (Chawal)</option>
+            </select>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-black uppercase tracking-widest text-stone-400 px-1">Matti ki Qism (Soil Type)</label>
+            <div className="flex gap-2">
+              {['Loamy', 'Clay', 'Sandy'].map(t => (
+                <button 
+                  key={t}
+                  onClick={() => setSoilType(t)}
+                  className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${soilType === t ? 'bg-emerald-600 text-white shadow-lg' : 'bg-stone-100 text-stone-400'}`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <button 
+          onClick={generatePlan}
+          disabled={!currentCrop || loading}
+          className="w-full bg-emerald-900 text-white py-6 rounded-3xl font-black uppercase tracking-[0.2em] shadow-xl active:scale-95 disabled:opacity-50 transition-all text-lg flex items-center justify-center gap-3"
+        >
+          {loading ? <Loader2 className="animate-spin" /> : <TrendingUp size={20} />}
+          {loading ? 'Planning...' : 'Plan Tyar Karein'}
+        </button>
+
+        {plan && (
+          <div className="space-y-4 mt-8">
+            <div className="h-[1px] bg-emerald-50 w-full mb-2"></div>
+            {plan.map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.2 }}
+                className="p-5 bg-gradient-to-r from-[#f8faf9] to-white rounded-3xl border border-emerald-50 flex gap-4"
+              >
+                <div className="w-10 h-10 rounded-2xl bg-white border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 font-black text-xs">
+                  0{i+1}
+                </div>
+                <div>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-emerald-400">{step.season}</span>
+                  <h4 className="text-lg font-black text-emerald-900">{step.crop}</h4>
+                  <p className="text-[11px] font-bold text-stone-400 italic mb-2">{step.reason}</p>
+                  <div className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-lg text-[8px] font-black uppercase tracking-widest border border-emerald-100">
+                    {step.impact}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
