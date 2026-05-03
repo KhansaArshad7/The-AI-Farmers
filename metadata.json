@@ -1,0 +1,6 @@
+{
+  "name": "The AI Farmers",
+  "description": "A comprehensive agricultural suite featuring a Roman Urdu profit calculator, drone booking simulation, market alerts, and alternative crop suggestions.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": []
+}
